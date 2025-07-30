@@ -2,15 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import FormEditarProveedor from './FormEditarProveedor';
 
-export default function ProveedorTable() {
+export default function ProveedorTable({ onEditar, refreshTrigger }) {
   const [proveedores, setProveedores] = useState([]);
-  const [editandoId, setEditandoId] = useState(null);
 
   useEffect(() => {
     cargarProveedores();
-  }, []);
+  }, [refreshTrigger]);
 
   const cargarProveedores = async () => {
     try {
@@ -21,72 +19,49 @@ export default function ProveedorTable() {
     }
   };
 
-  const handleEditarClick = (id) => {
-    setEditandoId(id);
-  };
-
-  const handleActualizacion = () => {
-    setEditandoId(null);
-    cargarProveedores();
-  };
-
   const handleEliminarClick = async (id) => {
-    if (confirm(`¿Seguro que quieres eliminar el proveedor #${id}?`)) {
-        try {
+    // eslint-disable-next-line no-restricted-globals
+    if (confirm(`¿Eliminar proveedor #${id}?`)) {
+      try {
         await axios.delete(`http://localhost:3001/api/proveedores/${id}`);
         alert('Proveedor eliminado correctamente');
         cargarProveedores();
-        } catch (error) {
+      } catch (error) {
         console.error('Error al eliminar proveedor:', error);
-        alert('Error al eliminar proveedor');
-        }
+        alert('Ocurrió un error al eliminar');
+      }
     }
   };
 
-
   return (
-    <div>
-      <h2>Lista de proveedores</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Proveedor</th>
-            <th>Contacto</th>
-            <th>Teléfono</th>
-            <th>Email</th>
-            <th>Dirección</th>
-            <th>Acciones</th>
+    <table>
+      <thead>
+        <tr>
+          <th>Proveedor</th>
+          <th>Contacto</th>
+          <th>Teléfono</th>
+          <th>Email</th>
+          <th>Dirección</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {proveedores.map((prov) => (
+          <tr key={prov.id_proveedor}>
+            <td>{prov.proveedor}</td>
+            <td>{prov.contacto}</td>
+            <td>{prov.telefono}</td>
+            <td>{prov.email}</td>
+            <td>{prov.direccion}</td>
+            <td>
+              <button onClick={() => onEditar(prov.id_proveedor)}>Editar</button>
+              <button onClick={() => handleEliminarClick(prov.id_proveedor)} style={{ marginLeft: '8px' }}>
+                Eliminar
+              </button>
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          {proveedores.map((prov) => (
-            <tr key={prov.id_proveedor}>
-              <td>{prov.proveedor}</td>
-              <td>{prov.contacto}</td>
-              <td>{prov.telefono}</td>
-              <td>{prov.email}</td>
-              <td>{prov.direccion}</td>
-              <td>
-                  <button onClick={() => handleEditarClick(prov.id_proveedor)}>Editar</button>
-                  <button onClick={() => handleEliminarClick(prov.id_proveedor)} style={{ marginLeft: '8px' }}>
-                      Eliminar
-                  </button>
-              </td>
-
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {editandoId && (
-        <div>
-          <h3>Editando proveedor #{editandoId}</h3>
-          <FormEditarProveedor
-            idProveedor={editandoId}
-            onUpdateSuccess={handleActualizacion}
-          />
-        </div>
-      )}
-    </div>
+        ))}
+      </tbody>
+    </table>
   );
 }
