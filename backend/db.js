@@ -1,4 +1,5 @@
 // backend/db.js
+//Conexión a la Base de Datos
 const mysql = require('mysql2');
 const dotenv = require('dotenv');
 dotenv.config();
