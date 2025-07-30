@@ -9,6 +9,22 @@ exports.getProveedores = (req, res) => {
   });
 };
 
+exports.getProveedorPorId = (req, res) => {
+  const { id } = req.params;
+  console.log('Solicitando proveedor con ID:', id); // 👈 Esto ayuda
+  db.query(
+    'SELECT * FROM proveedores WHERE id_proveedor = ?',
+    [id],
+    (err, results) => {
+      if (err) return res.status(500).json(err);
+      if (results.length === 0) {
+        return res.status(404).json({ message: 'Proveedor no encontrado' });
+      }
+      res.json(results[0]);
+    }
+  );
+};
+
 exports.addProveedor = (req, res) => {
   const { proveedor, contacto, telefono, email, direccion } = req.body;
   db.query(

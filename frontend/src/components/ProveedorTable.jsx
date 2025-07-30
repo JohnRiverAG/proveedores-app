@@ -33,6 +33,11 @@ export default function ProveedorTable({ onEditar, refreshTrigger }) {
     }
   };
 
+  const handleEditarClick = (id) => {
+  onEditar(id); // se lo manda a App.js
+  };
+
+
   return (
     <table>
       <thead>

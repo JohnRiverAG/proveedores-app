@@ -15,22 +15,19 @@ export default function ProveedorForm({ idProveedor, onSubmitSuccess }) {
   });
 
   useEffect(() => {
-    if (idProveedor) {
-      cargarDatos();
-    } else {
-      setFormData({
-        proveedor: '',
-        contacto: '',
-        telefono: '',
-        email: '',
-        direccion: ''
-      });
-    }
-  }, [idProveedor]);
+  if (idProveedor) {
+    axios.get(`/api/proveedores/${idProveedor}`).then(res => {
+      setFormData(res.data); // cargar datos en el form
+    }).catch(err => {
+      console.error("Error al obtener proveedor:", err);
+    });
+  }
+}, [idProveedor]);
+
 
   const cargarDatos = async () => {
     try {
-      const { data } = await axios.get(`http://localhost:3001/api/proveedores/${idProveedor}`);
+      const { data } = await axios.get(`/api/proveedores/${idProveedor}`)
       setFormData(data);
     } catch (error) {
       console.error('Error al cargar proveedor:', error);

@@ -7,7 +7,6 @@ dotenv.config();
 
 const app = express();
 const proveedoresRoutes = require('./routes/proveedores');
-
 app.use(cors());
 app.use(express.json());
 app.use('/api/proveedores', proveedoresRoutes);
